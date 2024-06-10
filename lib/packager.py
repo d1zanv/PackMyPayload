@@ -941,15 +941,23 @@ DISKPART> detach vdisk
 
                             iso2.add_directory(joliet_path=f'/{jp}')
                     
-                    # Hide file(s) when backdooring existing iso file
-                    if self.hide != '': 
+                    # Hide file(s) and directory(ies) when backdooring existing iso file
+                    if self.hide != '':
                         if type(self.hide) is list:
-                            for hideFile in self.hide:
-                                self.logger.text(f'\tHiding file: //{hideFile}') 
-                                iso2.set_hidden(joliet_path=f'/{hideFile};1')
+                            for hideItem in self.hide:
+                                if re.match(r'.+\..+', hideItem):
+                                    self.logger.text(f'\tHiding file: //{hideItem}') 
+                                    iso2.set_hidden(joliet_path=f'/{hideItem};1')
+                                else:
+                                    self.logger.text(f'\tHiding dir : //{hideItem}') 
+                                    iso2.set_hidden(joliet_path=f'/{hideItem}')
                         else:
-                            self.logger.text(f'\tHiding file: //{self.hide}') 
-                            iso2.set_hidden(joliet_path=f'/{self.hide};1')
+                            if re.match(r'.+\..+', self.hide):
+                                self.logger.text(f'\tHiding file: //{self.hide}') 
+                                iso2.set_hidden(joliet_path=f'/{self.hide};1')
+                            else:
+                                self.logger.text(f'\tHiding dir : //{self.hide}') 
+                                iso2.set_hidden(joliet_path=f'/{self.hide}')
 
                     iso2.write(outfile)
                     iso2.close()
@@ -1004,15 +1012,23 @@ DISKPART> detach vdisk
                             self.logger.text(f'\tAdding file: /{lf}')
                             iso.add_file(fname, joliet_path=f'/{lf};1')
                     
-                # Hide file(s) when specified 
-                if self.hide != '': 
+                # Hide file(s) and directory(ies) when specified 
+                if self.hide != '':
                     if type(self.hide) is list:
-                        for hideFile in self.hide:
-                            self.logger.text(f'\tHiding file: //{hideFile}') 
-                            iso.set_hidden(joliet_path=f'/{hideFile};1')
+                        for hideItem in self.hide:
+                            if re.match(r'.+\..+', hideItem):
+                                self.logger.text(f'\tHiding file: //{hideItem}') 
+                                iso.set_hidden(joliet_path=f'/{hideItem};1')
+                            else:
+                                self.logger.text(f'\tHiding dir : //{hideItem}') 
+                                iso.set_hidden(joliet_path=f'/{hideItem}')
                     else:
-                        self.logger.text(f'\tHiding file: //{self.hide}') 
-                        iso.set_hidden(joliet_path=f'/{self.hide};1')
+                        if re.match(r'.+\..+', self.hide):
+                            self.logger.text(f'\tHiding file: //{self.hide}') 
+                            iso.set_hidden(joliet_path=f'/{self.hide};1')
+                        else:
+                            self.logger.text(f'\tHiding dir : //{self.hide}') 
+                            iso.set_hidden(joliet_path=f'/{self.hide}')
 
                 iso.write(outfile)
                 iso.close()
